@@ -6,14 +6,22 @@ import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.renderComposable
 import kotlin.random.Random
 
-//Hello
-
 fun main() {
-    val fullSudoku = mutableStateListOf<Array<Int>>()
+    val fullSudoku: MutableList<MutableList<Int>> = mutableStateListOf(
+        mutableStateListOf(0, 0, 0, 0, 0, 0, 0, 0, 0),
+        mutableStateListOf(0, 0, 0, 0, 0, 0, 0, 0, 0),
+        mutableStateListOf(0, 0, 0, 0, 0, 0, 0, 0, 0),
+        mutableStateListOf(0, 0, 0, 0, 0, 0, 0, 0, 0),
+        mutableStateListOf(0, 0, 0, 0, 0, 0, 0, 0, 0),
+        mutableStateListOf(0, 0, 0, 0, 0, 0, 0, 0, 0),
+        mutableStateListOf(0, 0, 0, 0, 0, 0, 0, 0, 0),
+        mutableStateListOf(0, 0, 0, 0, 0, 0, 0, 0, 0),
+        mutableStateListOf(0, 0, 0, 0, 0, 0, 0, 0, 0)
+    )
     for (i in 0..8){
         for (j in 0..8){
-            //fullSudoku[i][j] = Random.nextInt(8)
-            console.log(i, j)
+            fullSudoku[i][j] = (Random.nextInt(9) + 1)
+            console.log(i, j, fullSudoku[i][j])
         }
     }
     val boxSize: Int = if (window.innerHeight < window.innerWidth){ (window.innerHeight / 10) } else { (window.innerWidth / 10) }
@@ -33,7 +41,8 @@ fun main() {
                     Tr ({ style { height(boxSize.px) } }){
                         for (j in 0..8) {
                             Td ({ style { width(boxSize.px) } }){
-                                Text(i.toString() + j.toString())
+                                //Text(i.toString() + j.toString())
+                                Text(fullSudoku[i][j].toString())
                             }//Td-end
                         }
                     }//Tr-end
