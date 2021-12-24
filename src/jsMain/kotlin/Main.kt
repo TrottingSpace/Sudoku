@@ -20,7 +20,6 @@ fun main() {
     console.log(window.innerHeight, window.innerWidth, boxSize)
 
     renderComposable(rootElementId = "root") {
-        Span ({style { fontSize((boxSize * 0.5).px) }}){ Text("Welcome") }
         Div {
             Table({
                 style {
@@ -31,9 +30,9 @@ fun main() {
                 }
             }) {
                 for (i in 0..8) {
-                    Tr ({ style { height((boxSize * 0.9).px) } }){
+                    Tr ({ style { height(boxSize.px) } }){
                         for (j in 0..8) {
-                            Td ({ style { width((boxSize * 0.9).px) } }){
+                            Td ({ style { width(boxSize.px) } }){
                                 Text(i.toString() + j.toString())
                             }//Td-end
                         }
@@ -41,5 +40,6 @@ fun main() {
                 }
             }//Table-end
         }//Div-end
+        Span ({style { fontSize((boxSize * 0.5).px) }}){ Text("Welcome") }
     }
 }
