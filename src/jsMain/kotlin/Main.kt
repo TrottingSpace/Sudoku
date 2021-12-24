@@ -1,37 +1,45 @@
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import kotlinx.browser.window
 import org.jetbrains.compose.web.attributes.*
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.renderComposable
+import kotlin.random.Random
 
 //Hello
 
 fun main() {
-    //var count: Int by mutableStateOf(0)
+    val fullSudoku = mutableStateListOf<Array<Int>>()
+    for (i in 0..8){
+        for (j in 0..8){
+            //fullSudoku[i][j] = Random.nextInt(8)
+            console.log(i, j)
+        }
+    }
+    val boxSize: Int = if (window.innerHeight < window.innerWidth){ (window.innerHeight / 10) } else { (window.innerWidth / 10) }
+    console.log(window.innerHeight, window.innerWidth, boxSize)
 
     renderComposable(rootElementId = "root") {
-        /*
-        Div({ style { padding(25.px) } }) {
-            Button(attrs = {
-                onClick { count -= 1 }
+        Span ({style { fontSize((boxSize * 0.5).px) }}){ Text("Welcome") }
+        Div {
+            Table({
+                style {
+                    fontSize((boxSize * 0.75).px)
+                    border(1.px, LineStyle.Solid, Color.blueviolet)
+                    textAlign("center")
+                    property("vertical-align", "center")
+                }
             }) {
-                Text("-")
-            }
-
-            Span({ style { padding(15.px) } }) {
-                Text("$count")
-            }
-
-            Button(attrs = {
-                onClick { count += 1 }
-            }) {
-                Text("+")
-            }
-        }
-        */
-        Text("Welcome")
+                for (i in 0..8) {
+                    Tr ({ style { height((boxSize * 0.9).px) } }){
+                        for (j in 0..8) {
+                            Td ({ style { width((boxSize * 0.9).px) } }){
+                                Text(i.toString() + j.toString())
+                            }//Td-end
+                        }
+                    }//Tr-end
+                }
+            }//Table-end
+        }//Div-end
     }
 }
