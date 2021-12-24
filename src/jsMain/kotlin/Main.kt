@@ -20,7 +20,7 @@ fun main() {
     console.log(window.innerHeight, window.innerWidth, boxSize)
 
     renderComposable(rootElementId = "root") {
-        Div {
+        Div ({ style { padding((boxSize / 2).px) } }){
             Table({
                 style {
                     fontSize((boxSize * 0.75).px)
