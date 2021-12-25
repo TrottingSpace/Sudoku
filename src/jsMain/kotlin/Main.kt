@@ -49,6 +49,6 @@ fun main() {
                 }
             }//Table-end
         }//Div-end
-        Span ({style { fontSize((boxSize * 0.5).px) }}){ Text("Welcome") }
+        Span ({style { fontSize((boxSize * 0.5).px) }}){ Text("Welcome\n This thing doesn't want to work.") }
     }
 }
