@@ -37,11 +37,21 @@ fun main() {
         }
     }
 
-    /*
     fun removeFromSquare(row: Int, col: Int) {
-        //console.log("Removing number from square")
+        val squareCenterRow = ((row / 3) * 3) + 1
+        val squareCenterCol = ((col / 3) * 3) + 1
+        //console.log("Removing", sudokuFrontend[row][col], "from square", (row / 3), (col / 3))
+        for (i in (squareCenterRow - 1)..(squareCenterRow + 1)) {
+            for (j in (squareCenterCol - 1)..(squareCenterCol + 1)) {
+                if (sudokuBackend[i][j].contains(sudokuFrontend[row][col])) {
+                    sudokuBackend[i][j].remove(sudokuFrontend[row][col])
+                    //console.log("\t Removed", sudokuFrontend[row][col], "from field", i, j)
+                } else {
+                    //console.log("\t Field", i, j, "don't contains", sudokuFrontend[row][col])
+                }
+            }
+        }
     }
-    */
 
     fun drawRandom(row: Int, col: Int) {
         val listLength = sudokuBackend[row][col].size
@@ -61,6 +71,7 @@ fun main() {
     for (i in 0..8) {
         for (j in 0..8) {
             drawRandom(i, j)
+            removeFromSquare(i, j)
             removeFromRow(i, sudokuFrontend[i][j])
             removeFromColumn(j, sudokuFrontend[i][j])
         }
