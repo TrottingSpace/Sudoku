@@ -13,41 +13,46 @@ fun main() {
 
     //val testArr3d: MutableList<MutableList<MutableList<Int>>> = mutableListOf(*(0..8).map { mutableListOf(*(0..8).map { mutableListOf(*(0..8).map { 0 }.toTypedArray()) }.toTypedArray()) }.toTypedArray())
 
-    fun removeFromRow(row: Int, k: Int) {
-        //console.log("Removing", k, "from row", row)
+    fun removeFromRow(row: Int, n: Int) {
+        //console.log("Removing", n, "from row", row)
         for (j in 0..8) {
-            if (sudokuBackend[row][j].contains(k)) {
-                sudokuBackend[row][j].remove(k)
-                //console.log("\t", k, "successfully removed from field", j)
+            if (sudokuBackend[row][j].contains(n)) {
+                sudokuBackend[row][j].remove(n)
+                //console.log("\t", n, "successfully removed from field", j)
             } else {
-                //console.log("\t Field", j, "don't contains", k)
+                //console.log("\t Field", j, "don't contains", n)
             }
         }
     }
 
-    fun removeFromColumn(col: Int, k: Int) {
-        //console.log("Removing", k, "from column", col)
+    fun removeFromColumn(col: Int, n: Int) {
+        //console.log("Removing", n, "from column", col)
         for (i in 0..8) {
-            if (sudokuBackend[i][col].contains(k)) {
-                sudokuBackend[i][col].remove(k)
-                //console.log("\t", k, "successfully removed from field", i)
+            if (sudokuBackend[i][col].contains(n)) {
+                sudokuBackend[i][col].remove(n)
+                //console.log("\t", n, "successfully removed from field", i)
             } else {
-                //console.log("\t Field", i, "don't contains", k)
+                //console.log("\t Field", i, "don't contains", n)
             }
         }
     }
 
-    fun drawRandom(x: Int, y: Int) {
-        val listLength = sudokuBackend[x][y].size
+    /*
+    fun removeFromSquare(row: Int, col: Int) {
+        //console.log("Removing number from square")
+    }
+    */
+
+    fun drawRandom(row: Int, col: Int) {
+        val listLength = sudokuBackend[row][col].size
         if (listLength <= 0) {
-            sudokuFrontend[x][y] = 0
+            sudokuFrontend[row][col] = 0
         } else {
             val randomIndex = Random.nextInt(listLength)
-            sudokuFrontend[x][y] = sudokuBackend[x][y][randomIndex]
-            //removeFromRow(x, sudokuBackend[x][y][randomIndex])
-            //removeFromColumn(y, sudokuBackend[x][y][randomIndex])
-            //sudokuBackend[x][y].removeAt(randomIndex)
+            sudokuFrontend[row][col] = sudokuBackend[row][col][randomIndex]
         }
+        //removeFromRow(x, sudokuFrontend[x][y])
+        //removeFromColumn(y, sudokuFrontend[x][y])
     }
 
     val boxSize: Int = if (window.innerHeight < window.innerWidth){ (window.innerHeight / 10) } else { (window.innerWidth / 10) }
@@ -78,7 +83,7 @@ fun main() {
                 for (i in 0..8) {
                     Tr ({ style { height(boxSize.px) } }){
                         for (j in 0..8) {
-                            Td ({ style { width(boxSize.px); border(1.px, LineStyle.Solid, Color.blueviolet); backgroundColor(if (sudokuFrontend[i][j] == 0) {Color.lightpink} else {Color.white}) } }){
+                            Td ({ style { width(boxSize.px); border(1.px, LineStyle.Solid, Color.blueviolet); backgroundColor(if (sudokuFrontend[i][j] == 0) {Color.lightpink} else if (sudokuBackend[i][j].size != 0) {Color.lightyellow} else {Color.white}) } }){
                                 Text(sudokuFrontend[i][j].toString() + sudokuBackend[i][j].toString())
                                 //Text(sudokuFrontend[i][j].toString())
                             }//Td-end
