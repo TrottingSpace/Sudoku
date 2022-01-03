@@ -11,7 +11,36 @@ fun main() {
     val sudokuBackend: MutableList<MutableList<MutableList<Int>>> = mutableListOf(*(0..8).map { mutableListOf(*(0..8).map { mutableListOf(1, 2, 3, 4, 5, 6, 7, 8, 9) }.toTypedArray()) }.toTypedArray())
     val sudokuFrontend: MutableList<MutableList<Int>> = mutableStateListOf(*(0..8).map { mutableStateListOf(*(0..8).map { 404 }.toTypedArray()) }.toTypedArray())
 
+    /*
+    val sudokuFields: MutableList<MutableList<Int>> = mutableListOf(*(0..80).map { mutableListOf(*(0..1).map { 404 }.toTypedArray()) }.toTypedArray())
+    for (i in 0..8) {
+        for (j in 0..8) {
+            sudokuFields[(i * 9) + j][0] = i
+            sudokuFields[(i * 9) + j][1] = j
+            //console.log("Position:", ((i * 9) + j), "\n\t Field:", sudokuFields[(i * 9) + j][0], sudokuFields[(i * 9) + j][1])
+        }
+    }
+    */
+
     //val testArr3d: MutableList<MutableList<MutableList<Int>>> = mutableListOf(*(0..8).map { mutableListOf(*(0..8).map { mutableListOf(*(0..8).map { 0 }.toTypedArray()) }.toTypedArray()) }.toTypedArray())
+
+    var errorFound = false
+    var errorCounter = 0
+    var rebuildCounter = 0
+
+    fun resetSudoku() {
+        for (i in 0..8) {
+            for (j in 0..8) {
+                for (n in 0..8) {
+                    if (sudokuBackend[i][j].size <= n) {
+                        sudokuBackend[i][j].add(0)
+                    }
+                    sudokuBackend[i][j][n] = n + 1
+                }
+                sudokuFrontend[i][j] = 707
+            }
+        }
+    }
 
     fun removeFromRow(row: Int, n: Int) {
         //console.log("Removing", n, "from row", row)
@@ -57,6 +86,9 @@ fun main() {
         val listLength = sudokuBackend[row][col].size
         if (listLength <= 0) {
             sudokuFrontend[row][col] = 0
+            errorFound = true
+            errorCounter += 1
+            //console.log("Error has been found\n\t Counted $errorCounter errors")
         } else {
             val randomIndex = Random.nextInt(listLength)
             sudokuFrontend[row][col] = sudokuBackend[row][col][randomIndex]
@@ -68,14 +100,38 @@ fun main() {
     val boxSize: Int = if (window.innerHeight < window.innerWidth){ (window.innerHeight / 10) } else { (window.innerWidth / 10) }
     console.log(" Window height:\t", window.innerHeight, "\n Window width:\t", window.innerWidth, "\n Size factor:\t", boxSize)
 
-    for (i in 0..8) {
-        for (j in 0..8) {
-            drawRandom(i, j)
-            removeFromSquare(i, j)
-            removeFromRow(i, sudokuFrontend[i][j])
-            removeFromColumn(j, sudokuFrontend[i][j])
+    /*do {
+        if (errorFound) {
+            rebuildCounter += 1
+            console.log("Errors found: $errorCounter\n Rebuild $rebuildCounter started ...")
+            errorFound = false
+            errorCounter = 0
+            resetSudoku()
+        }*/
+        for (i in 0..8) {
+            for (j in 0..8) {
+                drawRandom(i, j)
+                removeFromSquare(i, j)
+                removeFromRow(i, sudokuFrontend[i][j])
+                removeFromColumn(j, sudokuFrontend[i][j])
+            }
         }
+        /*if (!errorFound) {
+            console.log("%c Generated sudoku is correct.", "color: black; font-weight: bold; background-color: lightgreen;")
+        }
+    } while (errorFound)*/
+
+    /*
+    for (n in 0..80) {
+        val fieldsCount = sudokuFields.size
+        val randomIndex = Random.nextInt(fieldsCount)
+        drawRandom(sudokuFields[randomIndex][0], sudokuFields[randomIndex][1])
+        removeFromSquare(sudokuFields[randomIndex][0], sudokuFields[randomIndex][1])
+        removeFromRow(sudokuFields[randomIndex][0], sudokuFrontend[sudokuFields[randomIndex][0]][sudokuFields[randomIndex][1]])
+        removeFromColumn(sudokuFields[randomIndex][1], sudokuFrontend[sudokuFields[randomIndex][0]][sudokuFields[randomIndex][1]])
+        sudokuFields.removeAt(randomIndex)
     }
+    */
 
     renderComposable(rootElementId = "root") {
         Div ({ style { padding(1.px) } }){
@@ -104,6 +160,8 @@ fun main() {
             }//Table-end
         }//Div-end
         //window.alert("Project under development.")
+        Text("Generated correct sudoku at try: " + (rebuildCounter + 1).toString())
+        Br()
         Text("Project under development.")
     }
 }
