@@ -160,7 +160,7 @@ fun main() {
             }//Table-end
         }//Div-end
         //window.alert("Project under development.")
-        Text("Generated correct sudoku at try: " + (rebuildCounter + 1).toString())
+        //Text("Generated correct sudoku at try: " + (rebuildCounter + 1).toString())
         Br()
         Text("Project under development.")
     }
