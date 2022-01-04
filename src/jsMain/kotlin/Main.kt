@@ -1,4 +1,5 @@
 import androidx.compose.runtime.*
+import kotlinx.browser.document
 import kotlinx.browser.window
 //import org.jetbrains.compose.web.attributes.*
 import org.jetbrains.compose.web.css.*
@@ -100,6 +101,10 @@ fun main() {
     val boxSize: Int = if (window.innerHeight < window.innerWidth){ (window.innerHeight / 10) } else { (window.innerWidth / 10) }
     console.log(" Window height:\t", window.innerHeight, "\n Window width:\t", window.innerWidth, "\n Size factor:\t", boxSize)
 
+    val sudokuDiv = document.getElementById("sudoku_root")
+    sudokuDiv?.setAttribute("style", "padding: 0px; border: none; aspect-ratio: 1;")
+    console.log(" Sudoku div width:\t", sudokuDiv?.clientWidth, "\n Sudoku div height:\t", sudokuDiv?.clientHeight)
+
     /*do {
         if (errorFound) {
             rebuildCounter += 1
@@ -133,24 +138,27 @@ fun main() {
     }
     */
 
-    renderComposable(rootElementId = "root") {
+    renderComposable(rootElementId = "sudoku_root") {
         Div ({ style { padding(1.px) } }){
             Table({
                 style {
                     fontSize((boxSize * 0.35).px)
                     border(1.px, LineStyle.Solid, Color.blueviolet)
                     textAlign("center")
-                    property("vertical-align", "center")
+                    //property("vertical-align", "center")
                     property("table-layout", "fixed")
                     property("border-spacing", "0px")
-                    width(((boxSize * 9) + 2).px)
-                    height(((boxSize * 9) + 2).px)
+                    //width(((boxSize * 9) + 2).px)
+                    //height(((boxSize * 9) + 2).px)
+                    property("width", "100%")
+                    property("height", "100%")
+                    property("aspect-ratio", "1")
                 }
             }) {
                 for (i in 0..8) {
-                    Tr ({ style { height(boxSize.px) } }){
+                    Tr ({ style { /*height(boxSize.px)*/ } }){
                         for (j in 0..8) {
-                            Td ({ style { width(boxSize.px); border(1.px, LineStyle.Solid, Color.blueviolet); backgroundColor(if (sudokuFrontend[i][j] == 0) {Color.lightpink} else if (sudokuBackend[i][j].size != 0) {Color.lightyellow} else {Color.white}) } }){
+                            Td ({ style { /*width(boxSize.px); */border(1.px, LineStyle.Solid, Color.blueviolet); backgroundColor(if (sudokuFrontend[i][j] == 0) {Color.lightpink} else if (sudokuBackend[i][j].size != 0) {Color.lightyellow} else {Color.white}) } }){
                                 Text(sudokuFrontend[i][j].toString() + sudokuBackend[i][j].toString())
                                 //Text(sudokuFrontend[i][j].toString())
                             }//Td-end
@@ -161,7 +169,7 @@ fun main() {
         }//Div-end
         //window.alert("Project under development.")
         //Text("Generated correct sudoku at try: " + (rebuildCounter + 1).toString())
-        Br()
-        Text("Project under development.")
+        //Br()
+        //Text("Project under development.")
     }
 }
