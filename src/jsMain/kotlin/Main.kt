@@ -10,7 +10,7 @@ import kotlin.random.Random
 fun main() {
     console.log("%c Welcome in Sudoku! ", "color: white; font-weight: bold; background-color: black;")
     val sudokuGenerated: MutableList<MutableList<Int>> = mutableListOf(*(0..8).map { mutableListOf(*(0..8).map { 404 }.toTypedArray()) }.toTypedArray())
-    //val sudokuConflict: MutableList<MutableList<Boolean>> = mutableListOf(*(0..8).map { mutableListOf(*(0..8).map { false }.toTypedArray()) }.toTypedArray())
+    val sudokuConflict: MutableList<MutableList<Boolean>> = mutableListOf(*(0..8).map { mutableListOf(*(0..8).map { false }.toTypedArray()) }.toTypedArray())
     val sudokuSquares: MutableList<MutableList<MutableList<Int>>> = mutableListOf(*(0..2).map { mutableListOf(*(0..2).map { mutableListOf(1, 2, 3, 4, 5, 6, 7, 8, 9) }.toTypedArray()) }.toTypedArray())
     for (i in 0..2) {
         for (j in 0..2) {
@@ -19,6 +19,8 @@ fun main() {
     }
     //console.log(sudokuSquares.toString())
 
+
+    //squares to field
     for (i in listOf(1, 4, 7)) {
         for (j in listOf(1, 4, 7)) {
             //console.log("Field selected:", i, j)
@@ -33,10 +35,26 @@ fun main() {
         }
     }
 
-    val testVal = listOf(1, 3, 3, 4, 7, 6, 7, 8, 9).distinct()
+
+    fun verifyField(row: Int, col: Int): Boolean {
+        val verifyNumber = sudokuGenerated[row][col]
+        for (n in 0..8) {
+            if (sudokuGenerated[row][n] == verifyNumber && n != col) {
+                return true
+            }
+            if (sudokuGenerated[n][col] == verifyNumber && n != row) {
+                return true
+            }
+        }
+        return false
+    }
+
+
+    val testVal = listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 4, 5, 6, 7).distinct()
     console.log("Test:", testVal.toString())
 
-    //things that stay for now
+
+//things that stay for now
 
     val sudokuFrontend: MutableList<MutableList<Int>> = mutableStateListOf(*(0..8).map { mutableStateListOf(*(0..8).map { 0 }.toTypedArray()) }.toTypedArray())
     val fieldByUser: MutableList<MutableList<Boolean>> = mutableStateListOf(*(0..8).map { mutableStateListOf(*(0..8).map { false }.toTypedArray()) }.toTypedArray())
@@ -69,13 +87,14 @@ fun main() {
 
     val sudokuDiv = document.getElementById("sudoku_root")
     sudokuDiv?.setAttribute("style", "padding: 0px; border: none; aspect-ratio: 1;")
-    console.log(" Sudoku div width:\t", sudokuDiv?.clientWidth, "\n Sudoku div height:\t", sudokuDiv?.clientHeight)
+    val divFontSize: Int = if (sudokuDiv != null) { sudokuDiv.clientWidth / 28 } else { 10 }
+    console.log(" Sudoku div width:\t", sudokuDiv?.clientWidth, "\n Sudoku div height:\t", sudokuDiv?.clientHeight, "\n Div font size:\t\t", divFontSize)
 
     renderComposable(rootElementId = "sudoku_root") {
         Div ({ style { padding(1.px) } }){
             Table({
                 style {
-                    fontSize((boxSize * 0.35).px)
+                    fontSize(divFontSize.px)
                     border(1.px, LineStyle.Solid, Color.blueviolet)
                     textAlign("center")
                     //property("vertical-align", "center")
@@ -92,10 +111,10 @@ fun main() {
                 for (i in 0..8) {
                     Tr ({ style { /*height(boxSize.px)*/ } }){
                         for (j in 0..8) {
-                            Td ({ style { /*width(boxSize.px); */border(1.px, LineStyle.Solid, Color.blueviolet);padding(0.px) } }){
+                            Td ({ style { /*width(boxSize.px); */border(1.px, LineStyle.Solid, Color.blueviolet); padding(0.px); if (verifyField(i, j)) { backgroundColor(Color.lightcoral) } } }){
                                 if (fieldByUser[i][j]) {
                                     Select({
-                                        style { if (sudokuFrontend[i][j] == 0) { backgroundColor(Color.lightyellow) }; property("width", "100%"); property("height", "100%"); fontSize((boxSize * 0.35).px); textAlign("center"); outline("none"); margin(0.px); padding(0.px); property("border", "none") }
+                                        style { if (sudokuFrontend[i][j] == 0) { backgroundColor(Color.lightyellow) }; property("width", "100%"); property("height", "100%"); fontSize(divFontSize.px); textAlign("center"); outline("none"); margin(0.px); padding(0.px); property("border", "none") }
                                         onChange {
                                             sudokuFrontend[i][j] = it.value!!.toInt()
                                             console.log("Field: $i $j updated")
