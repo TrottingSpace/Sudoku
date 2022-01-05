@@ -10,9 +10,14 @@ import kotlin.random.Random
 fun main() {
     console.log("%c Welcome in Sudoku! ", "color: white; font-weight: bold; background-color: black;")
     val sudokuBackend: MutableList<MutableList<MutableList<Int>>> = mutableListOf(*(0..8).map { mutableListOf(*(0..8).map { mutableListOf(1, 2, 3, 4, 5, 6, 7, 8, 9) }.toTypedArray()) }.toTypedArray())
-    val sudokuFrontend: MutableList<MutableList<Int>> = mutableStateListOf(*(0..8).map { mutableStateListOf(*(0..8).map { 404 }.toTypedArray()) }.toTypedArray())
+    val sudokuGenerated: MutableList<MutableList<Int>> = mutableListOf(*(0..8).map { mutableListOf(*(0..8).map { 404 }.toTypedArray()) }.toTypedArray())
+    val sudokuFrontend: MutableList<MutableList<Int>> = mutableStateListOf(*(0..8).map { mutableStateListOf(*(0..8).map { 0 }.toTypedArray()) }.toTypedArray())
 
-    /*
+
+    val sudokuSquare: MutableList<MutableList<MutableList<Int>>> = mutableListOf(*(0..2).map { mutableListOf(*(0..2).map { mutableListOf(1, 2, 3, 4, 5, 6, 7, 8, 9) }.toTypedArray()) }.toTypedArray())
+
+    val sudokuByUser: MutableList<MutableList<Boolean>> = mutableStateListOf(*(0..8).map { mutableStateListOf(*(0..8).map { false }.toTypedArray()) }.toTypedArray())
+
     val sudokuFields: MutableList<MutableList<Int>> = mutableListOf(*(0..80).map { mutableListOf(*(0..1).map { 404 }.toTypedArray()) }.toTypedArray())
     for (i in 0..8) {
         for (j in 0..8) {
@@ -21,13 +26,20 @@ fun main() {
             //console.log("Position:", ((i * 9) + j), "\n\t Field:", sudokuFields[(i * 9) + j][0], sudokuFields[(i * 9) + j][1])
         }
     }
-    */
 
-    //val testArr3d: MutableList<MutableList<MutableList<Int>>> = mutableListOf(*(0..8).map { mutableListOf(*(0..8).map { mutableListOf(*(0..8).map { 0 }.toTypedArray()) }.toTypedArray()) }.toTypedArray())
-
-    var errorFound = false
-    var errorCounter = 0
-    var rebuildCounter = 0
+    fun fieldsForUser(n: Int) {
+        for (i in 0 until n) {
+            val fieldsList = sudokuFields.size
+            var randomField = 0
+            if (fieldsList != 0) {
+                randomField = Random.nextInt(fieldsList)
+            }
+            sudokuByUser[sudokuFields[randomField][0]][sudokuFields[randomField][1]] = true
+            console.log("Field:", sudokuFields[randomField][0], sudokuFields[randomField][1], "is now:", sudokuByUser[sudokuFields[randomField][0]][sudokuFields[randomField][1]])
+            sudokuFields.removeAt(randomField)
+        }
+    }
+    fieldsForUser(0)
 
     fun resetSudoku() {
         for (i in 0..8) {
@@ -38,7 +50,7 @@ fun main() {
                     }
                     sudokuBackend[i][j][n] = n + 1
                 }
-                sudokuFrontend[i][j] = 707
+                sudokuGenerated[i][j] = 707
             }
         }
     }
@@ -70,14 +82,14 @@ fun main() {
     fun removeFromSquare(row: Int, col: Int) {
         val squareCenterRow = ((row / 3) * 3) + 1
         val squareCenterCol = ((col / 3) * 3) + 1
-        //console.log("Removing", sudokuFrontend[row][col], "from square", (row / 3), (col / 3))
+        //console.log("Removing", sudokuGenerated[row][col], "from square", (row / 3), (col / 3))
         for (i in (squareCenterRow - 1)..(squareCenterRow + 1)) {
             for (j in (squareCenterCol - 1)..(squareCenterCol + 1)) {
-                if (sudokuBackend[i][j].contains(sudokuFrontend[row][col])) {
-                    sudokuBackend[i][j].remove(sudokuFrontend[row][col])
-                    //console.log("\t Removed", sudokuFrontend[row][col], "from field", i, j)
+                if (sudokuBackend[i][j].contains(sudokuGenerated[row][col])) {
+                    sudokuBackend[i][j].remove(sudokuGenerated[row][col])
+                    //console.log("\t Removed", sudokuGenerated[row][col], "from field", i, j)
                 } else {
-                    //console.log("\t Field", i, j, "don't contains", sudokuFrontend[row][col])
+                    //console.log("\t Field", i, j, "don't contains", sudokuGenerated[row][col])
                 }
             }
         }
@@ -86,16 +98,11 @@ fun main() {
     fun drawRandom(row: Int, col: Int) {
         val listLength = sudokuBackend[row][col].size
         if (listLength <= 0) {
-            sudokuFrontend[row][col] = 0
-            errorFound = true
-            errorCounter += 1
-            //console.log("Error has been found\n\t Counted $errorCounter errors")
+            sudokuGenerated[row][col] = 0
         } else {
             val randomIndex = Random.nextInt(listLength)
-            sudokuFrontend[row][col] = sudokuBackend[row][col][randomIndex]
+            sudokuGenerated[row][col] = sudokuBackend[row][col][randomIndex]
         }
-        //removeFromRow(x, sudokuFrontend[x][y])
-        //removeFromColumn(y, sudokuFrontend[x][y])
     }
 
     val boxSize: Int = if (window.innerHeight < window.innerWidth){ (window.innerHeight / 10) } else { (window.innerWidth / 10) }
@@ -105,38 +112,14 @@ fun main() {
     sudokuDiv?.setAttribute("style", "padding: 0px; border: none; aspect-ratio: 1;")
     console.log(" Sudoku div width:\t", sudokuDiv?.clientWidth, "\n Sudoku div height:\t", sudokuDiv?.clientHeight)
 
-    /*do {
-        if (errorFound) {
-            rebuildCounter += 1
-            console.log("Errors found: $errorCounter\n Rebuild $rebuildCounter started ...")
-            errorFound = false
-            errorCounter = 0
-            resetSudoku()
-        }*/
-        for (i in 0..8) {
-            for (j in 0..8) {
-                drawRandom(i, j)
-                removeFromSquare(i, j)
-                removeFromRow(i, sudokuFrontend[i][j])
-                removeFromColumn(j, sudokuFrontend[i][j])
-            }
+    for (i in 0..8) {
+        for (j in 0..8) {
+            drawRandom(i, j)
+            removeFromSquare(i, j)
+            removeFromRow(i, sudokuGenerated[i][j])
+            removeFromColumn(j, sudokuGenerated[i][j])
         }
-        /*if (!errorFound) {
-            console.log("%c Generated sudoku is correct.", "color: black; font-weight: bold; background-color: lightgreen;")
-        }
-    } while (errorFound)*/
-
-    /*
-    for (n in 0..80) {
-        val fieldsCount = sudokuFields.size
-        val randomIndex = Random.nextInt(fieldsCount)
-        drawRandom(sudokuFields[randomIndex][0], sudokuFields[randomIndex][1])
-        removeFromSquare(sudokuFields[randomIndex][0], sudokuFields[randomIndex][1])
-        removeFromRow(sudokuFields[randomIndex][0], sudokuFrontend[sudokuFields[randomIndex][0]][sudokuFields[randomIndex][1]])
-        removeFromColumn(sudokuFields[randomIndex][1], sudokuFrontend[sudokuFields[randomIndex][0]][sudokuFields[randomIndex][1]])
-        sudokuFields.removeAt(randomIndex)
     }
-    */
 
     renderComposable(rootElementId = "sudoku_root") {
         Div ({ style { padding(1.px) } }){
@@ -158,9 +141,25 @@ fun main() {
                 for (i in 0..8) {
                     Tr ({ style { /*height(boxSize.px)*/ } }){
                         for (j in 0..8) {
-                            Td ({ style { /*width(boxSize.px); */border(1.px, LineStyle.Solid, Color.blueviolet); backgroundColor(if (sudokuFrontend[i][j] == 0) {Color.lightpink} else if (sudokuBackend[i][j].size != 0) {Color.lightyellow} else {Color.white}) } }){
-                                Text(sudokuFrontend[i][j].toString() + sudokuBackend[i][j].toString())
-                                //Text(sudokuFrontend[i][j].toString())
+                            Td ({ style { /*width(boxSize.px); */border(1.px, LineStyle.Solid, Color.blueviolet);padding(0.px); backgroundColor(if (sudokuGenerated[i][j] == 0) {Color.lightpink} else if (sudokuBackend[i][j].size != 0) {Color.lightyellow} else {Color.lightgray}) } }){
+                                if (sudokuByUser[i][j]) {
+                                    Select({
+                                        style { if (sudokuFrontend[i][j] == 0) { backgroundColor(Color.aquamarine) }; property("width", "100%"); property("height", "100%"); fontSize((boxSize * 0.35).px); textAlign("center"); outline("none"); margin(0.px); padding(0.px); property("border", "none") }
+                                        onChange {
+                                            sudokuFrontend[i][j] = it.value!!.toInt()
+                                            console.log("Field:\t $i\t $j\n\t", sudokuFrontend[i][j])
+                                        }
+                                    }) {
+                                        (0..9).forEach {
+                                            Option(it.toString()) {
+                                                Text(if (it == 0) { "~" } else { it.toString() })
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    Text(sudokuGenerated[i][j].toString() + sudokuBackend[i][j].toString())
+                                    //Text(sudokuGenerated[i][j].toString())
+                                }
                             }//Td-end
                         }
                     }//Tr-end
@@ -168,7 +167,6 @@ fun main() {
             }//Table-end
         }//Div-end
         //window.alert("Project under development.")
-        //Text("Generated correct sudoku at try: " + (rebuildCounter + 1).toString())
         //Br()
         //Text("Project under development.")
     }
