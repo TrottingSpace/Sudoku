@@ -1,6 +1,7 @@
 body {
     margin: 0px !important;
     /*background-color: #eeeeee*/
+    background-color: dimgray;
 }
 #sudoku_root {
     width: 100vmin;
