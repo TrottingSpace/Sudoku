@@ -102,8 +102,7 @@ fun main() {
                 while (verifyPreviousInRow(n, j)) {
                     val currentSquareIndex = sudokuSquareIndex[n][j]
                     console.log("\t\t\t Starting number\t", sudokuSquares[n / 3][j / 3][currentSquareIndex])
-                    for (swapIndex in (currentSquareIndex + 1)..8) {
-                        //TODO should search from index 0
+                    for (swapIndex in 0..8) {
                         if ((!findInRow(n, j, sudokuSquares[n / 3][j / 3][swapIndex])) && sudokuSquaresFieldUnsorted[n / 3][j / 3][swapIndex]) {
                             console.log("\t\t\t Found number\t", sudokuSquares[n / 3][j / 3][swapIndex])
                             val swappingNumber = sudokuSquares[n / 3][j / 3][currentSquareIndex]
@@ -133,8 +132,7 @@ fun main() {
                 while (verifyPreviousInCol(i, n)) {
                     val currentSquareIndex = sudokuSquareIndex[i][n]
                     console.log("\t\t\t Starting number\t", sudokuSquares[i / 3][n / 3][currentSquareIndex])
-                    for (swapIndex in (currentSquareIndex + 1)..8) {
-                        //TODO should search from index 0
+                    for (swapIndex in 0..8) {
                         if ((!findInCol(i, n, sudokuSquares[i / 3][n / 3][swapIndex])) && sudokuSquaresFieldUnsorted[i / 3][n / 3][swapIndex]) {
                             console.log("\t\t\t Found number\t", sudokuSquares[i / 3][n / 3][swapIndex])
                             val swappingNumber = sudokuSquares[i / 3][n / 3][currentSquareIndex]
