@@ -17,6 +17,7 @@ fun main() {
         }
     }
     val sudokuSquaresFieldUnsorted: MutableList<MutableList<MutableList<Boolean>>> = mutableListOf(*(0..2).map { mutableListOf(*(0..2).map { mutableListOf(*(0..8).map { true }.toTypedArray()) }.toTypedArray()) }.toTypedArray())
+    val fieldLooped: MutableList<MutableList<Boolean>> = mutableListOf(*(0..8).map { mutableListOf(*(0..8).map { false }.toTypedArray()) }.toTypedArray())
 
     //assign indexes from squares to entire field
     val sudokuSquareIndex: MutableList<MutableList<Int>> = mutableListOf(*(0..8).map { mutableListOf(*(0..8).map { 0 }.toTypedArray()) }.toTypedArray())
@@ -59,6 +60,14 @@ fun main() {
         //console.log("\t Number $verifyNumber is unique in row $row")
         return false
     }
+    fun findInRow(row: Int, col: Int, num: Int): Boolean {
+        for (j in 0 until col) {
+            if (sudokuGenerated[row][j] == num) {
+                return true
+            }
+        }
+        return false
+    }
 
     //searching duplicates in current column on previous fields
     fun verifyPreviousInCol(row: Int, col: Int): Boolean {
@@ -73,47 +82,73 @@ fun main() {
         //console.log("\t Number $verifyNumber is unique in column $col")
         return false
     }
+    fun findInCol(row: Int, col: Int, num: Int): Boolean {
+        for (i in 0 until row) {
+            if (sudokuGenerated[i][col] == num) {
+                return true
+            }
+        }
+        return false
+    }
 
     fun sortSudoku() {
         val sortingIndex = mutableListOf(0, 1, 2, 3, 4, 5, 6, 7, 8)
         for (n in sortingIndex) {
             //for fields in row n
+            console.log("%c Row $n ", "color: white; font-weight: bold; background-color: deepskyblue;")
             for (j in 0..8) {
                 var whileRepeatJ = 0
+                console.log("%c $n $j ", "color: white; font-weight: bold; background-color: orange;")
                 while (verifyPreviousInRow(n, j)) {
                     val currentSquareIndex = sudokuSquareIndex[n][j]
+                    console.log("\t\t\t Starting number\t", sudokuSquares[n / 3][j / 3][currentSquareIndex])
                     for (swapIndex in (currentSquareIndex + 1)..8) {
-                        if (sudokuSquaresFieldUnsorted[n/3][j/3][swapIndex]) {
+                        if ((!findInRow(n, j, sudokuSquares[n / 3][j / 3][swapIndex])) && sudokuSquaresFieldUnsorted[n / 3][j / 3][swapIndex]) {
+                            console.log("\t\t\t Found number\t", sudokuSquares[n / 3][j / 3][swapIndex])
                             val swappingNumber = sudokuSquares[n / 3][j / 3][currentSquareIndex]
                             sudokuSquares[n / 3][j / 3][currentSquareIndex] = sudokuSquares[n / 3][j / 3][swapIndex]
                             sudokuSquares[n / 3][j / 3][swapIndex] = swappingNumber
+                            mapField()
+                            break
                         }
                     }
                     whileRepeatJ += 1
                     if (whileRepeatJ > 20) {
-                        console.log("%c error $n $j ", "color: white; font-weight: bold; background-color: red;")
+                        console.log("%c loop error at: $n $j ", "color: white; font-weight: bold; background-color: red;")
+                        fieldLooped[n][j] = true
                         break
                     }
                 }
+                sudokuSquaresFieldUnsorted[n / 3][j / 3][sudokuSquareIndex[n][j]] = false
+                console.log("$n $j \t Final number\t", sudokuGenerated[n][j])
             }
             //for fields in column n
+            console.log("%c Column $n ", "color: white; font-weight: bold; background-color: deepskyblue;")
             for (i in 0..8) {
-                var whileRepeatJ = 0
+                var whileRepeatI = 0
+                console.log("%c $i $n ", "color: white; font-weight: bold; background-color: orange;")
                 while (verifyPreviousInCol(i, n)) {
                     val currentSquareIndex = sudokuSquareIndex[i][n]
+                    console.log("\t\t\t Starting number\t", sudokuSquares[i / 3][n / 3][currentSquareIndex])
                     for (swapIndex in (currentSquareIndex + 1)..8) {
-                        if (sudokuSquaresFieldUnsorted[i/3][n/3][swapIndex]) {
+                        if ((!findInCol(i, n, sudokuSquares[i / 3][n / 3][swapIndex])) && sudokuSquaresFieldUnsorted[i / 3][n / 3][swapIndex]) {
+                            console.log("\t\t\t Found number\t", sudokuSquares[i / 3][n / 3][swapIndex])
                             val swappingNumber = sudokuSquares[i / 3][n / 3][currentSquareIndex]
                             sudokuSquares[i / 3][n / 3][currentSquareIndex] = sudokuSquares[i / 3][n / 3][swapIndex]
                             sudokuSquares[i / 3][n / 3][swapIndex] = swappingNumber
+                            mapField()
+                            break
                         }
                     }
-                    whileRepeatJ += 1
-                    if (whileRepeatJ > 20) {
-                        console.log("%c error $i $n ", "color: white; font-weight: bold; background-color: red;")
+                    whileRepeatI += 1
+                    if (whileRepeatI > 20) {
+                        console.log("%c loop error at: $i $n ", "color: white; font-weight: bold; background-color: red;")
+                        fieldLooped[i][n] = true
                         break
                     }
                 }
+                sudokuSquaresFieldUnsorted[i / 3][n / 3][sudokuSquareIndex[i][n]] = false
+                console.log("$i $n \t Final number\t", sudokuGenerated[i][n])
             }
         }
     }
@@ -194,7 +229,7 @@ fun main() {
                 for (i in 0..8) {
                     Tr ({ style { /*height(boxSize.px)*/ } }){
                         for (j in 0..8) {
-                            Td ({ style { /*width(boxSize.px); */border(1.px, LineStyle.Solid, Color.blueviolet); padding(0.px); if (verifyField(i, j)) { backgroundColor(Color.lightcoral) } } }){
+                            Td ({ style { /*width(boxSize.px); */border(1.px, LineStyle.Solid, Color.blueviolet); padding(0.px); if (verifyField(i, j)) { backgroundColor(Color.lightcoral) }; if (fieldLooped[i][j]) { backgroundColor(Color.orange) } } }){
                                 if (fieldByUser[i][j]) {
                                     Select({
                                         style { if (sudokuFrontend[i][j] == 0) { backgroundColor(Color.lightyellow) }; property("width", "100%"); property("height", "100%"); fontSize(divFontSize.px); textAlign("center"); outline("none"); margin(0.px); padding(0.px); property("border", "none") }
