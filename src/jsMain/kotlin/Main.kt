@@ -103,6 +103,7 @@ fun main() {
                     val currentSquareIndex = sudokuSquareIndex[n][j]
                     console.log("\t\t\t Starting number\t", sudokuSquares[n / 3][j / 3][currentSquareIndex])
                     for (swapIndex in (currentSquareIndex + 1)..8) {
+                        //TODO should search from index 0
                         if ((!findInRow(n, j, sudokuSquares[n / 3][j / 3][swapIndex])) && sudokuSquaresFieldUnsorted[n / 3][j / 3][swapIndex]) {
                             console.log("\t\t\t Found number\t", sudokuSquares[n / 3][j / 3][swapIndex])
                             val swappingNumber = sudokuSquares[n / 3][j / 3][currentSquareIndex]
@@ -111,7 +112,9 @@ fun main() {
                             mapField()
                             break
                         }
+                        console.log("%c used ", "color: white; font-weight: bold; background-color: purple;")
                     }
+                    console.log("%c should back or break ", "color: white; font-weight: bold; background-color: orangered;")
                     whileRepeatJ += 1
                     if (whileRepeatJ > 20) {
                         console.log("%c loop error at: $n $j ", "color: white; font-weight: bold; background-color: red;")
@@ -131,6 +134,7 @@ fun main() {
                     val currentSquareIndex = sudokuSquareIndex[i][n]
                     console.log("\t\t\t Starting number\t", sudokuSquares[i / 3][n / 3][currentSquareIndex])
                     for (swapIndex in (currentSquareIndex + 1)..8) {
+                        //TODO should search from index 0
                         if ((!findInCol(i, n, sudokuSquares[i / 3][n / 3][swapIndex])) && sudokuSquaresFieldUnsorted[i / 3][n / 3][swapIndex]) {
                             console.log("\t\t\t Found number\t", sudokuSquares[i / 3][n / 3][swapIndex])
                             val swappingNumber = sudokuSquares[i / 3][n / 3][currentSquareIndex]
@@ -139,7 +143,9 @@ fun main() {
                             mapField()
                             break
                         }
+                        console.log("%c used ", "color: white; font-weight: bold; background-color: purple;")
                     }
+                    console.log("%c should back or break ", "color: white; font-weight: bold; background-color: orangered;")
                     whileRepeatI += 1
                     if (whileRepeatI > 20) {
                         console.log("%c loop error at: $i $n ", "color: white; font-weight: bold; background-color: red;")
@@ -229,7 +235,7 @@ fun main() {
                 for (i in 0..8) {
                     Tr ({ style { /*height(boxSize.px)*/ } }){
                         for (j in 0..8) {
-                            Td ({ style { /*width(boxSize.px); */border(1.px, LineStyle.Solid, Color.blueviolet); padding(0.px); if (verifyField(i, j)) { backgroundColor(Color.lightcoral) }; if (fieldLooped[i][j]) { backgroundColor(Color.orange) } } }){
+                            Td ({ style { /*width(boxSize.px); */border(1.px, LineStyle.Solid, Color.blueviolet); padding(0.px); if (verifyField(i, j)) { backgroundColor(Color.lightcoral) }; if (fieldLooped[i][j]) { color(Color.indigo) } } }){
                                 if (fieldByUser[i][j]) {
                                     Select({
                                         style { if (sudokuFrontend[i][j] == 0) { backgroundColor(Color.lightyellow) }; property("width", "100%"); property("height", "100%"); fontSize(divFontSize.px); textAlign("center"); outline("none"); margin(0.px); padding(0.px); property("border", "none") }
